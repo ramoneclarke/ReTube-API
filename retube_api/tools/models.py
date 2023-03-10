@@ -18,7 +18,7 @@ class Snippet(models.Model):
     video = models.ForeignKey(YoutubeVideo, on_delete=models.CASCADE)
     date_created = models.DateTimeField(auto_now_add=True)
     owner = models.ForeignKey(
-        "auth.user", related_name="snippets", on_delete=models.CASCADE
+        "auth.user", related_name="snippets", on_delete=models.CASCADE, default=None
     )
     def __str__(self):
         return self.text  
@@ -28,7 +28,7 @@ class YoutubePlaylist(models.Model):
     videos = models.ManyToManyField(YoutubeVideo)
     date_created = models.DateTimeField(auto_now_add=True)
     owner = models.ForeignKey(
-        "auth.user", related_name="playlists", on_delete=models.CASCADE
+        "auth.user", related_name="playlists", on_delete=models.CASCADE, default=None
     )
 
     def __str__(self):
