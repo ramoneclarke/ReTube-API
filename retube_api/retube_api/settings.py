@@ -31,7 +31,7 @@ SECRET_KEY = env("DJANGO_SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost']
 
 
 # Application definition
@@ -43,16 +43,20 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
     "django.contrib.sites",
+
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
     'allauth.socialaccount.providers.google',
     'dj_rest_auth',
     'dj_rest_auth.registration',
+    'rest_framework_simplejwt.token_blacklist',
+
     'tools.apps.ToolsConfig',
     
 ]
@@ -142,15 +146,12 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
+# CHANGE BEFORE PUSHING TO PRODUCTION
 CORS_ORIGIN_ALLOW_ALL = True
 
-AUTHENTICATION_BACKENDS = [
-    "allauth.account.auth_backends.AuthenticationBackend",
-    "django.contrib.auth.backends.ModelBackend",
-]
-
 SITE_ID = 1
+# SITE_DOMAIN = 'localhost:8000'
+# SITE_NAME = 'localhost'
 
 # Provider specific settings
 SOCIALACCOUNT_PROVIDERS = {
@@ -160,9 +161,51 @@ SOCIALACCOUNT_PROVIDERS = {
             'email',
         ],
         'AUTH_PARAMS': {
-            'access_type': 'offline',
+            'access_type': 'online',
         },
-        'OAUTH_PKCE_ENABLED': True,
+        # 'OAUTH_PKCE_ENABLED': True,
     }
     
 }
+
+SOCIALACCOUNT_EMAIL_VERIFICATION = "none"
+SOCIALACCOUNT_EMAIL_REQUIRED = False
+
+REST_AUTH = {
+    'USE_JWT': True,
+}
+
+from datetime import timedelta
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": False,
+    "UPDATE_LAST_LOGIN": False,
+    "USER_ID_FIELD": "userId",
+    "USER_ID_CLAIM": "user_id",
+    "SIGNING_KEY": env("JWT_SECRET_KEY"),
+}
+
+AUTH_USER_MODEL = "tools.CustomUserModel"
+
+REST_AUTH_SERIALIZERS = {
+    'USER_DETAILS_SERIALIZER': 'tools.serializers.CustomUserModelSerializer'
+    # 'LOGIN_SERIALIZER': 'dj_rest_auth.serializers.LoginSerializer',
+    # 'TOKEN_SERIALIZER': 'dj_rest_auth.serializers.TokenSerializer',
+}
+
+
+REST_FRAMEWORK = {
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        "dj_rest_auth.jwt_auth.JWTCookieAuthentication"
+        # 'rest_framework_social_oauth2.authentication.SocialAuthentication',
+    ],
+}
+
+ROOT_URLCONF = 'retube_api.urls'
