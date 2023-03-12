@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
 
     'tools.apps.ToolsConfig',
+    'users.apps.UsersConfig'
     
 ]
 
@@ -187,7 +188,7 @@ SIMPLE_JWT = {
     "SIGNING_KEY": env("JWT_SECRET_KEY"),
 }
 
-AUTH_USER_MODEL = "tools.CustomUserModel"
+AUTH_USER_MODEL = "users.CustomUserModel"
 
 REST_AUTH_SERIALIZERS = {
     'USER_DETAILS_SERIALIZER': 'tools.serializers.CustomUserModelSerializer'
