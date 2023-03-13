@@ -23,6 +23,13 @@ class VideoSnippetView(APIView):
 
     permission_classes = [IsAuthenticated, IsOwner]
 
+    def get(self, request, format=None):
+        user = request.user
+        snippets = Snippet.objects.filter(owner=user)
+        self.check_object_permissions(request,snippets)
+        snippet_serializer = SnippetSerializer(snippets, many=True, context={"request": request})
+        return Response(snippet_serializer.data)
+
     def post(self, request, format=None):
         user = request.user
         video_id = request.data.get('video_id', None)
