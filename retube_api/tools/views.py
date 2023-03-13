@@ -1,4 +1,5 @@
 from django.shortcuts import render
+import os
 from rest_framework.response import Response
 from rest_framework import status, generics, permissions
 from rest_framework.views import APIView
@@ -13,30 +14,34 @@ from tools.serializers import (
     SnippetSerializer,
     YoutubePlaylistSerializer,
 )
-from users.serializers import CustomUserModelSerializer
-from users.models import CustomUserModel
+from tools.utils import create_text_snippet
+from users.permissions import IsOwner
 
 
-@api_view(["GET"])
-def api_root(request, format=None):
-    return Response(
-        {
-            "users": reverse("user-list", request=request, format=format),
-            "snippets": reverse("snippets", request=request, format=format),
-            "playlists": reverse("playlists", request=request, format=format),
-        }
-    )
+
+class VideoSnippetView(APIView):
+    """
+    Fetch all of the user's snippets or create a new snippet.
+    """
+
+    permission_classes = [permissions.IsAuthenticated, IsOwner]
+
+    def post(self, request, format=None):
+        video_id = request.data.get('video_id', None)
+        if not video_id:
+            return Response({'error': 'video_id is required'}, status=400)
+        start = request.data.get('start', None)
+        if not start:
+            return Response({'error': 'start is required'}, status=400)
+        end = request.data.get('end', None)
+        if not end:
+            return Response({'error': 'end is required'}, status=400)
+        
+        snippet = create_text_snippet(video_id, start, end, request.user)
+        serializer = SnippetSerializer(snippet)
+
+        return Response(serializer.data)
 
 
-class UserList(generics.ListAPIView):
-    queryset = CustomUserModel.objects.all()
-    serializer_class = CustomUserModelSerializer
-
-    permission_classes = [permissions.IsAdminUser]
 
 
-class GoogleLogin(SocialLoginView):
-    authentication_classes = []
-    adapter_class = GoogleOAuth2Adapter
-    callback_url = 'http://localhost:3000'
-    client_class = OAuth2Client

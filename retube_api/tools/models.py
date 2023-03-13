@@ -18,6 +18,8 @@ class Summary(models.Model):
 class Snippet(models.Model):
     text = models.CharField(max_length=100)
     video = models.ForeignKey(YoutubeVideo, on_delete=models.CASCADE)
+    start = models.CharField(max_length=40, default="00:00:01.00")
+    end = models.CharField(max_length=40, default="00:00:02.00")
     date_created = models.DateTimeField(auto_now_add=True)
     owner = models.ForeignKey(
        CustomUserModel, related_name="snippets", on_delete=models.CASCADE, default=None
