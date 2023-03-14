@@ -10,7 +10,6 @@ class YoutubeVideo(models.Model):
         return self.title   
 
 class Summary(models.Model):
-    summary_text = models.CharField(max_length=4000)
     bullet_points = models.CharField(max_length=4000)
     video = models.OneToOneField(YoutubeVideo, on_delete=models.CASCADE)    
 

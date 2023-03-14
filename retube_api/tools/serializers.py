@@ -12,7 +12,7 @@ class SummarySerializer(serializers.ModelSerializer):
     video = YoutubeVideoSerializer()
     class Meta:
         model = Summary
-        fields = ('id', 'summary_text', 'bullet_points', 'video')
+        fields = ('id', 'bullet_points', 'video')
 
 class SnippetSerializer(serializers.ModelSerializer):
     video = YoutubeVideoSerializer()

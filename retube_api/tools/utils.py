@@ -3,7 +3,8 @@ from moviepy.editor import *
 from django.http import HttpResponseBadRequest
 import openai
 import environ
-from .models import Snippet, YoutubeVideo
+import tiktoken
+from .models import Snippet, YoutubeVideo, Summary
 
 env = environ.Env()
 # reading .env file
@@ -11,8 +12,92 @@ environ.Env.read_env()
 
 openai.api_key = env("OPENAI_API_KEY")
 
+def calculate_tokens_from_string(text):
+    """Returns the number of tokens in a text string."""
+    encoding = tiktoken.encoding_for_model("gpt-3.5-turbo")
+    num_tokens = len(encoding.encode(text)) 
+    return num_tokens
+
+def split_transcript_to_chunks(text, num_chunks):
+    """Returns a list of chunks of text"""
+    print("Splitting transcript into chunks")
+    sentences = text.split("\n")
+    chunks = []
+    current_chunk = ""
+    for sentence in sentences:
+        current_chunk += sentence + "\n"
+        if len(current_chunk) > len(text) // num_chunks:
+            chunks.append(current_chunk)
+            current_chunk = ""
+    if current_chunk:
+        chunks.append(current_chunk)
+
+    return chunks
+
+def summarise_youtube_video(text):
+    """Returns a summary of a youtube video transcript"""
+    print("Summarising video")
+    num_tokens = calculate_tokens_from_string(text)
+    # text in system and final user content = 44 tokens
+    max_tokens = 4096 - 44 - num_tokens
+    summary = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+                {"role": "system", "content": "You are a concise and informative speaker. You're going to summarise this youtube video, from its transcript"},
+                {"role": "user", "content": text},
+                {"role": "user", "content": "Write a set of bullet points explaining the key concepts and topics of the video. keep it concise. just summarise"},
+            ],
+        max_tokens=max_tokens - 100
+    )
+    print(summary)
+    return summary['choices'][0]['message']['content']
+
+
+def summarise_text_chunk(text):
+    """Returns a summary of a chunk of text from a long youtube transcript"""
+    print("Summarising text chunk")
+    num_tokens = calculate_tokens_from_string(text)
+    # text in system and final user content = 52 tokens
+    max_tokens = 4096 - 49 - num_tokens
+    summary = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+                {"role": "system", "content": "You are a concise and informative speaker. You're going to summarise this part of the youtube video, from its transcript"},
+                {"role": "user", "content": text},
+                {"role": "user", "content": "Write a set of bullet points explaining the key concepts and topics of this chunk of the video transcript. keep it concise. just summarise"},
+            ],
+        max_tokens=max_tokens - 100
+    )
+    return summary['choices'][0]['message']['content']
+
+
+def summarise_summaries(summaries_list):
+    """Returns a summary multiple summary chunks for a youtube video"""
+    print("Summarising summaries")
+    text = ""
+    for i, summary in enumerate(summaries_list):
+        text += summary['choices'][0]['message']['content']
+        if i < len(summaries_list) - 1:
+            text += "\n"  # add a \n between summaries
+
+    num_tokens = calculate_tokens_from_string(text)
+    # text in system and final user content = 52 tokens
+    max_tokens = 4096 - 53 - num_tokens
+    summary = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+                {"role": "system", "content": "You are a concise and informative speaker. You're going to summarise this video, from its transcript"},
+                {"role": "user", "content": text},
+                {"role": "user", "content": "This is a string of text that contains bullet points summarising a youtube video. Can you look at all of these and create one final summary, also using bullet points"},
+            ],
+        max_tokens=max_tokens - 100
+    )
+    print(summary)
+    return summary['choices'][0]['message']['content']
+
 
 def create_text_snippet(video_id, snippet_start, snippet_end, user):
+    """Transcribes a video snippet and returns the Snippet object"""
     url = f'https://www.youtube.com/watch?v={video_id}'
 
     # Download video and convert to mp3 file
@@ -47,7 +132,7 @@ def create_text_snippet(video_id, snippet_start, snippet_end, user):
         video_id=video_id,
         url=url,
     )
-
+    
     snippet = Snippet.objects.create(
             text=transcript["text"],
             video=youtube_video,
@@ -64,3 +149,77 @@ def create_text_snippet(video_id, snippet_start, snippet_end, user):
     os.remove(video_path)
 
     return snippet
+
+
+def create_summary(video_id):
+    """Returns a text summary of a youtube video"""
+
+    url = f'https://www.youtube.com/watch?v={video_id}'
+
+    # Download video and convert to mp3 file
+    try:
+        # Download the video using pytube
+        video = pytube.YouTube(url)
+        stream = video.streams.filter(only_audio=True).first()
+        stream.download()
+
+        # Convert the video to MP3
+        video_path = stream.default_filename
+        audio = AudioFileClip(video_path)
+
+        # Extract the audio:
+        audio_path = video_path[:-4] + ".mp3"
+        audio.write_audiofile(audio_path)
+
+        print("The video has been converted to MP3 successfully")
+    except Exception as e:
+        return HttpResponseBadRequest("Error downloading audio file: " + str(e))
+    
+    # Transcribe snippet audio
+    try:
+        audio_file = open(audio_path, "rb")
+        transcript = openai.Audio.transcribe("whisper-1", audio_file)
+    except Exception as e:
+        return HttpResponseBadRequest("Error transcribing audio file: " + str(e))
+    
+    youtube_video, created = YoutubeVideo.objects.get_or_create(
+        title=video.title,
+        video_id=video_id,
+        url=url,
+    )
+
+    # Create summary 
+    num_tokens = calculate_tokens_from_string(transcript["text"])
+    if num_tokens > (4096 - 44):
+        # Split transcript into chunks
+        num_of_chunks = round(num_tokens / (4096 - 52))
+        chunks = split_transcript_to_chunks(transcript["text"], num_of_chunks)
+
+        # Summarise chunks
+        summaries = []
+        for chunk in chunks:
+            summary = summarise_text_chunk(chunk)
+            summaries.append(summary)
+        
+        # Create the final summary from all the summaries
+        video_summary = summarise_summaries(summaries)
+    else:
+        # create one summary
+        video_summary = summarise_youtube_video(transcript["text"])
+    
+    summary = Summary.objects.create(
+           bullet_points = video_summary,
+           video = youtube_video
+        )
+    
+    # Close the audio objects
+    audio.close()
+    audio_file.close()
+    # Delete the files from the server
+    os.remove(audio_path)
+    os.remove(video_path)
+
+    return summary
+    
+
+    
