@@ -63,11 +63,12 @@ class SummaryView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
-        user = request.user
-        snippets = Snippet.objects.filter(owner=user)
-        self.check_object_permissions(request,snippets)
-        snippet_serializer = SnippetSerializer(snippets, many=True, context={"request": request})
-        return Response(snippet_serializer.data)
+        video_id = request.data.get('video_id', None)
+        if not video_id:
+            return Response({'error': 'video_id is required'}, status=400)
+        summary = Summary.objects.filter(video__video_id=video_id)
+        summary_serializer = SummarySerializer(summary, context={"request": request})
+        return Response(summary_serializer.data)
 
     def post(self, request, format=None):
         video_id = request.data.get('video_id', None)
