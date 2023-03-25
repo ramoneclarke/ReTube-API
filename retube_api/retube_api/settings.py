@@ -36,6 +36,14 @@ ALLOWED_HOSTS = ['localhost']
 
 # Application definition
 
+AUTHENTICATION_BACKENDS = [
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+
+    # `allauth` specific authentication methods, such as login by e-mail
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -55,7 +63,6 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',
     'dj_rest_auth',
     'dj_rest_auth.registration',
-    'rest_framework_simplejwt.token_blacklist',
 
     'tools.apps.ToolsConfig',
     'users.apps.UsersConfig'
@@ -152,9 +159,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # CHANGE BEFORE PUSHING TO PRODUCTION
 CORS_ORIGIN_ALLOW_ALL = True
 
-SITE_ID = 1
-# SITE_DOMAIN = 'localhost:8000'
-# SITE_NAME = 'localhost'
+SITE_ID = 2
+SITE_DOMAIN = 'localhost:3000'
+SITE_NAME = 'localhost'
 
 # Provider specific settings
 SOCIALACCOUNT_PROVIDERS = {
@@ -175,20 +182,8 @@ SOCIALACCOUNT_EMAIL_VERIFICATION = "none"
 SOCIALACCOUNT_EMAIL_REQUIRED = False
 
 REST_AUTH = {
-    'USE_JWT': True,
 }
 
-from datetime import timedelta
-SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
-    "ROTATE_REFRESH_TOKENS": True,
-    "BLACKLIST_AFTER_ROTATION": False,
-    "UPDATE_LAST_LOGIN": False,
-    "USER_ID_FIELD": "userId",
-    "USER_ID_CLAIM": "user_id",
-    "SIGNING_KEY": env("JWT_SECRET_KEY"),
-}
 
 AUTH_USER_MODEL = "users.CustomUserModel"
 
@@ -204,9 +199,8 @@ REST_FRAMEWORK = {
         "rest_framework.permissions.IsAuthenticated",
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.BasicAuthentication',
+        # 'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
-        "dj_rest_auth.jwt_auth.JWTCookieAuthentication"
         # 'rest_framework_social_oauth2.authentication.SocialAuthentication',
     ],
 }
