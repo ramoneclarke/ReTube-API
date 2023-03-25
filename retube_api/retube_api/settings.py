@@ -193,7 +193,7 @@ SIMPLE_JWT = {
 AUTH_USER_MODEL = "users.CustomUserModel"
 
 REST_AUTH_SERIALIZERS = {
-    'USER_DETAILS_SERIALIZER': 'tools.serializers.CustomUserModelSerializer'
+    'USER_DETAILS_SERIALIZER': 'users.serializers.CustomUserModelSerializer'
     # 'LOGIN_SERIALIZER': 'dj_rest_auth.serializers.LoginSerializer',
     # 'TOKEN_SERIALIZER': 'dj_rest_auth.serializers.TokenSerializer',
 }
