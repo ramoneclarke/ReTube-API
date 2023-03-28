@@ -37,15 +37,11 @@ ALLOWED_HOSTS = ['localhost']
 # Application definition
 
 AUTHENTICATION_BACKENDS = [
-    # Google OAuth2
-    'social_core.backends.google.GoogleOAuth2',
-
-    # drf-social-oauth2
-    # 'drf_social_oauth2.backends.DjangoOAuth2',
-    'users.inner_oauth.CustomOAuth2',
-
-    # Django
+    # Needed to login by username in Django admin, regardless of `allauth`
     'django.contrib.auth.backends.ModelBackend',
+
+    # `allauth` specific authentication methods, such as login by e-mail
+    'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
 INSTALLED_APPS = [
@@ -61,9 +57,13 @@ INSTALLED_APPS = [
     'corsheaders',
     "django.contrib.sites",
 
-    'oauth2_provider',
-    'social_django',
-    'drf_social_oauth2',
+    'dj_rest_auth',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+    'dj_rest_auth.registration',
+    
 
     'tools.apps.ToolsConfig',
     'users.apps.UsersConfig'
@@ -167,19 +167,22 @@ SITE_DOMAIN = 'localhost:3000'
 SITE_NAME = 'localhost'
 
 # Provider specific settings
-# SOCIALACCOUNT_PROVIDERS = {
-#     'google': {
-#         'SCOPE': [
-#             'profile',
-#             'email',
-#         ],
-#         'AUTH_PARAMS': {
-#             'access_type': 'online',
-#         },
-#         # 'OAUTH_PKCE_ENABLED': True,
-#     }
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'offline',
+        },
+        # 'OAUTH_PKCE_ENABLED': True,
+    }
     
-# }
+}
+
+SOCIALACCOUNT_EMAIL_VERIFICATION = "none"
+SOCIALACCOUNT_EMAIL_REQUIRED = True
 
 AUTH_USER_MODEL = "users.CustomUserModel"
 
@@ -189,31 +192,56 @@ REST_FRAMEWORK = {
         "rest_framework.permissions.IsAuthenticated",
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        # 'rest_framework.authentication.SessionAuthentication',
-        'oauth2_provider.contrib.rest_framework.OAuth2Authentication',  # django-oauth-toolkit >= 1.0.0
-        'drf_social_oauth2.authentication.SocialAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
     ],
 }
 
 ROOT_URLCONF = 'retube_api.urls'
 
 
-# drf-social-auth2 settings:
-DRFSO2_PROPRIETARY_BACKEND_NAME = "Google"
-DRFSO2_URL_NAMESPACE = "drf"
-ACTIVATE_JWT = False
+# # drf-social-auth2 settings:
+# DRFSO2_PROPRIETARY_BACKEND_NAME = "Google"
+# DRFSO2_URL_NAMESPACE = "drf"
+# ACTIVATE_JWT = False
 
-# python-social-auth:
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = env("SOCIAL_AUTH_GOOGLE_OAUTH2_KEY")
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = env("SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET")
-SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
-    'https://www.googleapis.com/auth/userinfo.email',
-    'https://www.googleapis.com/auth/userinfo.profile',
-]
+# # python-social-auth:
+# SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = env("SOCIAL_AUTH_GOOGLE_OAUTH2_KEY")
+# SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = env("SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET")
+# SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
+#     'https://www.googleapis.com/auth/userinfo.email',
+#     'https://www.googleapis.com/auth/userinfo.profile',
+# ]
 
-SOCIAL_AUTH_USER_MODEL = "users.CustomUserModel"
+# SOCIAL_AUTH_USER_MODEL = "users.CustomUserModel"
 
-SOCIAL_AUTH_USER_FIELDS = ["email", "username", "first_name"]
+# SOCIAL_AUTH_USER_FIELDS = ["email", "username", "first_name"]
 
-# social-django:
-# SOCIAL_AUTH_JSONFIELD_ENABLED = True # set to true when using a PostgreSQL db
+
+REST_AUTH = {
+    'LOGIN_SERIALIZER': 'dj_rest_auth.serializers.LoginSerializer',
+    'TOKEN_SERIALIZER': 'dj_rest_auth.serializers.TokenSerializer',
+
+    'REGISTER_SERIALIZER': 'dj_rest_auth.registration.serializers.RegisterSerializer',
+
+    'REGISTER_PERMISSION_CLASSES': ('rest_framework.permissions.AllowAny',),
+
+    'TOKEN_MODEL': 'rest_framework.authtoken.models.Token',
+    'TOKEN_CREATOR': 'dj_rest_auth.utils.default_create_token',
+
+    # 'PASSWORD_RESET_USE_SITES_DOMAIN': False,
+    # 'OLD_PASSWORD_FIELD_ENABLED': False,
+    # 'LOGOUT_ON_PASSWORD_CHANGE': False,
+    # 'SESSION_LOGIN': True,
+    'USE_JWT': False,
+
+    'JWT_AUTH_COOKIE': None,
+    'JWT_AUTH_REFRESH_COOKIE': None,
+    # 'JWT_AUTH_REFRESH_COOKIE_PATH': '/',
+    # 'JWT_AUTH_SECURE': False,
+    # 'JWT_AUTH_HTTPONLY': True,
+    # 'JWT_AUTH_SAMESITE': 'Lax',
+    # 'JWT_AUTH_RETURN_EXPIRATION': False,
+    # 'JWT_AUTH_COOKIE_USE_CSRF': False,
+    # 'JWT_AUTH_COOKIE_ENFORCE_CSRF_ON_UNAUTHENTICATED': False,
+}
