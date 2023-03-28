@@ -35,11 +35,13 @@ class CustomUserModel(AbstractBaseUser, PermissionsMixin):
     userId = models.CharField(max_length=16, default=uuid4, primary_key=True, editable=False)
     username = models.CharField(max_length=16, unique=True, null=False, blank=False)
     email = models.EmailField(max_length=100, unique=True, null=False, blank=False)
+    first_name = models.CharField(max_length=150, blank=True)
+    last_name = models.CharField(max_length=150, blank=True)
 
-    USERNAME_FIELD = "username"
-    REQUIRED_FIELDS = ["email"]
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = ["username", "first_name"]
 
-    active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=True)
 
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)

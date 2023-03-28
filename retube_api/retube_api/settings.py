@@ -37,11 +37,15 @@ ALLOWED_HOSTS = ['localhost']
 # Application definition
 
 AUTHENTICATION_BACKENDS = [
-    # Needed to login by username in Django admin, regardless of `allauth`
-    'django.contrib.auth.backends.ModelBackend',
+    # Google OAuth2
+    'social_core.backends.google.GoogleOAuth2',
 
-    # `allauth` specific authentication methods, such as login by e-mail
-    'allauth.account.auth_backends.AuthenticationBackend',
+    # drf-social-oauth2
+    # 'drf_social_oauth2.backends.DjangoOAuth2',
+    'users.inner_oauth.CustomOAuth2',
+
+    # Django
+    'django.contrib.auth.backends.ModelBackend',
 ]
 
 INSTALLED_APPS = [
@@ -57,12 +61,9 @@ INSTALLED_APPS = [
     'corsheaders',
     "django.contrib.sites",
 
-    "allauth",
-    "allauth.account",
-    "allauth.socialaccount",
-    'allauth.socialaccount.providers.google',
-    'dj_rest_auth',
-    'dj_rest_auth.registration',
+    'oauth2_provider',
+    'social_django',
+    'drf_social_oauth2',
 
     'tools.apps.ToolsConfig',
     'users.apps.UsersConfig'
@@ -94,6 +95,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
             ],
         },
     },
@@ -164,34 +167,21 @@ SITE_DOMAIN = 'localhost:3000'
 SITE_NAME = 'localhost'
 
 # Provider specific settings
-SOCIALACCOUNT_PROVIDERS = {
-    'google': {
-        'SCOPE': [
-            'profile',
-            'email',
-        ],
-        'AUTH_PARAMS': {
-            'access_type': 'online',
-        },
-        # 'OAUTH_PKCE_ENABLED': True,
-    }
+# SOCIALACCOUNT_PROVIDERS = {
+#     'google': {
+#         'SCOPE': [
+#             'profile',
+#             'email',
+#         ],
+#         'AUTH_PARAMS': {
+#             'access_type': 'online',
+#         },
+#         # 'OAUTH_PKCE_ENABLED': True,
+#     }
     
-}
-
-SOCIALACCOUNT_EMAIL_VERIFICATION = "none"
-SOCIALACCOUNT_EMAIL_REQUIRED = False
-
-REST_AUTH = {
-}
-
+# }
 
 AUTH_USER_MODEL = "users.CustomUserModel"
-
-REST_AUTH_SERIALIZERS = {
-    'USER_DETAILS_SERIALIZER': 'users.serializers.CustomUserModelSerializer'
-    # 'LOGIN_SERIALIZER': 'dj_rest_auth.serializers.LoginSerializer',
-    # 'TOKEN_SERIALIZER': 'dj_rest_auth.serializers.TokenSerializer',
-}
 
 
 REST_FRAMEWORK = {
@@ -199,10 +189,31 @@ REST_FRAMEWORK = {
         "rest_framework.permissions.IsAuthenticated",
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        # 'rest_framework.authentication.BasicAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-        # 'rest_framework_social_oauth2.authentication.SocialAuthentication',
+        # 'rest_framework.authentication.SessionAuthentication',
+        'oauth2_provider.contrib.rest_framework.OAuth2Authentication',  # django-oauth-toolkit >= 1.0.0
+        'drf_social_oauth2.authentication.SocialAuthentication',
     ],
 }
 
 ROOT_URLCONF = 'retube_api.urls'
+
+
+# drf-social-auth2 settings:
+DRFSO2_PROPRIETARY_BACKEND_NAME = "Google"
+DRFSO2_URL_NAMESPACE = "drf"
+ACTIVATE_JWT = False
+
+# python-social-auth:
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = env("SOCIAL_AUTH_GOOGLE_OAUTH2_KEY")
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = env("SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET")
+SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
+    'https://www.googleapis.com/auth/userinfo.email',
+    'https://www.googleapis.com/auth/userinfo.profile',
+]
+
+SOCIAL_AUTH_USER_MODEL = "users.CustomUserModel"
+
+SOCIAL_AUTH_USER_FIELDS = ["email", "username", "first_name"]
+
+# social-django:
+# SOCIAL_AUTH_JSONFIELD_ENABLED = True # set to true when using a PostgreSQL db

@@ -1,0 +1,2 @@
+
+curl -X POST -d "client_id=GQyMs4GhvCfAu6KG9SFFkIHolIWhvbs2UUwkMzOb&client_secret=ZjbuJfUwqXef6soE4etCpKYJC8J01tEHvDoCdQChCVLOH4Kj7Q4FiszZeU3SZMPDEEbDcCcVywKRx9voUyqqNg1m9P56nrEZD1Wi1RCN7i0R4gVlRXA8Rsg6Q7pRaSGQ&grant_type=password&username=rjlc&password=021505rme" http://localhost:8000/auth/token
