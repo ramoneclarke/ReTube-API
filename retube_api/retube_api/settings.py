@@ -31,7 +31,7 @@ SECRET_KEY = env("DJANGO_SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost']
+ALLOWED_HOSTS = ['localhost', "http://localhost:3000", "127.0.0.1"]
 
 
 # Application definition
@@ -159,11 +159,8 @@ MEDIA_URL = "/media/"
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# CHANGE BEFORE PUSHING TO PRODUCTION
-CORS_ORIGIN_ALLOW_ALL = True
-
 SITE_ID = 2
-SITE_DOMAIN = 'localhost:3000'
+SITE_DOMAIN = '127.0.0.1:3000'
 SITE_NAME = 'localhost'
 
 # Provider specific settings
@@ -245,3 +242,53 @@ REST_AUTH = {
     # 'JWT_AUTH_COOKIE_USE_CSRF': False,
     # 'JWT_AUTH_COOKIE_ENFORCE_CSRF_ON_UNAUTHENTICATED': False,
 }
+
+# CSRF_USE_SESSIONS = True
+# CSRF_COOKIE_SAMESITE = "None"
+CSRF_COOKIE_SECURE = False
+CSRF_COOKIE_HTTPONLY = False
+CSRF_COOKIE_DOMAIN = ".127.0.0.1"
+# SESSION_COOKIE_SAMESITE = "None"
+SESSION_COOKIE_SECURE = False
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_DOMAIN = ".127.0.0.1"
+
+# CHANGE BEFORE PUSHING TO PRODUCTION
+CORS_ALLOW_ALL_ORIGINS = True
+
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:3000",
+#     "http://localhost",
+#     "http://127.0.0.1:3000",
+#     "http://127.0.0.1",
+# ]
+
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:3000",
+    "http://localhost:3001",
+    "http://127.0.0.1:3000"
+]
+
+# CORS_EXPOSE_HEADERS = ["Content-Type", "X-CSRFToken"]
+CORS_ALLOW_CREDENTIALS = True
+
+CORS_ALLOW_METHODS = [
+    "DELETE",
+    "GET",
+    "OPTIONS",
+    "PATCH",
+    "POST",
+    "PUT",
+]
+CORS_ALLOW_HEADERS = [
+    "accept",
+    "accept-encoding",
+    "authorization",
+    "content-type",
+    "dnt",
+    "origin",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
+]

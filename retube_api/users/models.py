@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.utils import timezone
 from uuid import uuid4
 
 class CustomUserModelManager(BaseUserManager):
@@ -46,8 +47,8 @@ class CustomUserModel(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
 
-    created_on = models.DateTimeField(auto_now_add=True, blank=True, null=True)
-    updated_at = models.DateTimeField(auto_now_add=True)
+    date_joined = models.DateTimeField(default=timezone.now(), blank=True, null=True)
+    updated_at = models.DateTimeField(default=timezone.now())
 
     objects = CustomUserModelManager()
 
