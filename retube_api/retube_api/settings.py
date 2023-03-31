@@ -196,59 +196,23 @@ REST_FRAMEWORK = {
 
 ROOT_URLCONF = 'retube_api.urls'
 
-
-# # drf-social-auth2 settings:
-# DRFSO2_PROPRIETARY_BACKEND_NAME = "Google"
-# DRFSO2_URL_NAMESPACE = "drf"
-# ACTIVATE_JWT = False
-
-# # python-social-auth:
-# SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = env("SOCIAL_AUTH_GOOGLE_OAUTH2_KEY")
-# SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = env("SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET")
-# SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
-#     'https://www.googleapis.com/auth/userinfo.email',
-#     'https://www.googleapis.com/auth/userinfo.profile',
-# ]
-
-# SOCIAL_AUTH_USER_MODEL = "users.CustomUserModel"
-
-# SOCIAL_AUTH_USER_FIELDS = ["email", "username", "first_name"]
-
-
 REST_AUTH = {
     'LOGIN_SERIALIZER': 'dj_rest_auth.serializers.LoginSerializer',
     'TOKEN_SERIALIZER': 'dj_rest_auth.serializers.TokenSerializer',
 
     'REGISTER_SERIALIZER': 'dj_rest_auth.registration.serializers.RegisterSerializer',
-
     'REGISTER_PERMISSION_CLASSES': ('rest_framework.permissions.AllowAny',),
 
     'TOKEN_MODEL': 'rest_framework.authtoken.models.Token',
     'TOKEN_CREATOR': 'dj_rest_auth.utils.default_create_token',
 
-    # 'PASSWORD_RESET_USE_SITES_DOMAIN': False,
-    # 'OLD_PASSWORD_FIELD_ENABLED': False,
-    # 'LOGOUT_ON_PASSWORD_CHANGE': False,
-    # 'SESSION_LOGIN': True,
+    'SESSION_LOGIN': True,
     'USE_JWT': False,
-
-    'JWT_AUTH_COOKIE': None,
-    'JWT_AUTH_REFRESH_COOKIE': None,
-    # 'JWT_AUTH_REFRESH_COOKIE_PATH': '/',
-    # 'JWT_AUTH_SECURE': False,
-    # 'JWT_AUTH_HTTPONLY': True,
-    # 'JWT_AUTH_SAMESITE': 'Lax',
-    # 'JWT_AUTH_RETURN_EXPIRATION': False,
-    # 'JWT_AUTH_COOKIE_USE_CSRF': False,
-    # 'JWT_AUTH_COOKIE_ENFORCE_CSRF_ON_UNAUTHENTICATED': False,
 }
 
-# CSRF_USE_SESSIONS = True
-# CSRF_COOKIE_SAMESITE = "None"
 CSRF_COOKIE_SECURE = False
 CSRF_COOKIE_HTTPONLY = False
 CSRF_COOKIE_DOMAIN = ".127.0.0.1"
-# SESSION_COOKIE_SAMESITE = "None"
 SESSION_COOKIE_SECURE = False
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_DOMAIN = ".127.0.0.1"
@@ -270,7 +234,6 @@ CSRF_TRUSTED_ORIGINS = [
     "http://127.0.0.1:3000"
 ]
 
-# CORS_EXPOSE_HEADERS = ["Content-Type", "X-CSRFToken"]
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOW_METHODS = [
