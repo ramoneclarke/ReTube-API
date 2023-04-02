@@ -64,6 +64,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',
     'dj_rest_auth.registration',
     
+    'rest_framework_simplejwt.token_blacklist',
 
     'tools.apps.ToolsConfig',
     'users.apps.UsersConfig'
@@ -190,7 +191,7 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
 }
 
@@ -203,11 +204,31 @@ REST_AUTH = {
     'REGISTER_SERIALIZER': 'dj_rest_auth.registration.serializers.RegisterSerializer',
     'REGISTER_PERMISSION_CLASSES': ('rest_framework.permissions.AllowAny',),
 
+    'USER_DETAILS_SERIALIZER': 'users.serializers.CustomUserModelSerializer',
+
     'TOKEN_MODEL': 'rest_framework.authtoken.models.Token',
     'TOKEN_CREATOR': 'dj_rest_auth.utils.default_create_token',
 
     'SESSION_LOGIN': True,
-    'USE_JWT': False,
+    'USE_JWT': True,
+    'JWT_AUTH_HTTPONLY': False
+}
+
+from datetime import timedelta
+...
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": True,
+    "UPDATE_LAST_LOGIN": False,
+    "AUTH_HEADER_TYPES": ("Bearer",),
+    "USER_ID_FIELD": "userId",
+    "USER_ID_CLAIM": "user_id",
+    "SIGNING_KEY": env("JWT_SECRET_KEY"),
+
+    # "AUTH_TOKEN_CLASSES": ("rest_framework_simplejwt.tokens.AccessToken",),
 }
 
 CSRF_COOKIE_SECURE = False
