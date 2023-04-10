@@ -67,11 +67,13 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
 
     'tools.apps.ToolsConfig',
-    'users.apps.UsersConfig'
+    'users.apps.UsersConfig',
+    'subscriptions.apps.SubscriptionsConfig'
     
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -79,7 +81,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
 ]
 
@@ -239,14 +240,14 @@ SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_DOMAIN = ".127.0.0.1"
 
 # CHANGE BEFORE PUSHING TO PRODUCTION
-CORS_ALLOW_ALL_ORIGINS = True
+# CORS_ALLOW_ALL_ORIGINS = True
 
-# CORS_ALLOWED_ORIGINS = [
-#     "http://localhost:3000",
-#     "http://localhost",
-#     "http://127.0.0.1:3000",
-#     "http://127.0.0.1",
-# ]
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://localhost",
+    "http://127.0.0.1:3000",
+    "http://127.0.0.1",
+]
 
 
 CSRF_TRUSTED_ORIGINS = [

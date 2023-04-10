@@ -11,7 +11,8 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
     # path('auth/', include('drf_social_oauth2.urls', namespace='drf')),
     path("tools/", include("tools.urls")),
-    path("api/", include("users.urls"))
+    path("api/", include("users.urls")),
+    path("payments/", include("subscriptions.urls")),
 ]
 
 if settings.DEBUG:
