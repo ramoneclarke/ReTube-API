@@ -4,14 +4,15 @@ from django.utils import timezone
 from uuid import uuid4
 
 class CustomUserModelManager(BaseUserManager):
-    def create_user(self, username, email, password=None):
+    def create_user(self, username, email, password=None, **extra_fields):
         """
         Creates a custom user with the given fields
         """
 
         user = self.model(
             username = username,
-            email = self.normalize_email(email)
+            email = self.normalize_email(email),
+            **extra_fields,
         )
 
         user.set_password(password)
@@ -19,11 +20,12 @@ class CustomUserModelManager(BaseUserManager):
 
         return user
     
-    def create_superuser(self, username, email, password):
+    def create_superuser(self, email, username, first_name, password, **extra_fields ):
         user = self.create_user(
-            username,
-            email,
-            password = password
+            username=username,
+            email=email,
+            password=password,
+            first_name=first_name
         )
 
         user.is_staff = True
@@ -33,8 +35,8 @@ class CustomUserModelManager(BaseUserManager):
         return user
 
 class CustomUserModel(AbstractBaseUser, PermissionsMixin):
-    userId = models.CharField(max_length=16, default=uuid4, primary_key=True, editable=False)
-    username = models.CharField(max_length=16, unique=True, null=False, blank=False)
+    userId = models.CharField(max_length=100, default=uuid4, primary_key=True, editable=False)
+    username = models.CharField(max_length=32, unique=True, null=False, blank=False)
     email = models.EmailField(max_length=100, unique=True, null=False, blank=False)
     first_name = models.CharField(max_length=150, blank=True)
     last_name = models.CharField(max_length=150, blank=True)

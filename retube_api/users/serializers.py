@@ -13,7 +13,6 @@ class CustomUserModelSerializer(serializers.ModelSerializer):
             "userId",
             "username",
             "email",
-            "password",
             "snippets",
             "playlists"
         ]
