@@ -245,12 +245,14 @@ SIMPLE_JWT = {
     # "AUTH_TOKEN_CLASSES": ("rest_framework_simplejwt.tokens.AccessToken",),
 }
 
-CSRF_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = False
 CSRF_COOKIE_HTTPONLY = False
-CSRF_COOKIE_DOMAIN = ".127.0.0.1"
+# CSRF_COOKIE_DOMAIN = ".127.0.0.1"
+CSRF_COOKIE_DOMAIN = "https://*.retube-api-production.up.railway.app"
 SESSION_COOKIE_SECURE = False
 SESSION_COOKIE_HTTPONLY = True
-SESSION_COOKIE_DOMAIN = ".127.0.0.1"
+# SESSION_COOKIE_DOMAIN = ".127.0.0.1"
+SESSION_COOKIE_DOMAIN = "https://*.retube-api-production.up.railway.app"
 
 # CHANGE BEFORE PUSHING TO PRODUCTION
 # CORS_ALLOW_ALL_ORIGINS = True
