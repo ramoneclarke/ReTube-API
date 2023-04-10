@@ -3,9 +3,10 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
-class SubscriptionPlan(models.model):
+class SubscriptionPlan(models.Model):
     name = models.CharField(max_length=200)
     stripe_product_id = models.CharField(max_length=100, blank=True)
+    monthly_limit = models.IntegerField()
 
 class Subscription(models.Model):
     user = models.ForeignKey(User, related_name="subscriptions", on_delete=models.CASCADE, default=None)
