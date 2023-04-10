@@ -136,9 +136,9 @@ GitHub.sublime-settings
 !.vscode/extensions.json 
 .history
 
-# Secret info
-backend/secrets.py
 
 # Static files
 
 staticfiles
+
+retube_api/commands.txt
