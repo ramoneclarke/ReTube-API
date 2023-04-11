@@ -3,6 +3,8 @@ from rest_framework import generics, permissions
 from rest_framework.decorators import api_view
 from rest_framework.reverse import reverse
 from rest_framework.permissions import IsAuthenticated
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 from django.http import JsonResponse
 from django.middleware.csrf import get_token
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
@@ -43,3 +45,7 @@ class GoogleLogin(CustomSocialLoginView):
     adapter_class = GoogleOAuth2Adapter
     callback_url = 'http://localhost:3000'
     client_class = OAuth2Client
+    
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
