@@ -174,7 +174,7 @@ MEDIA_URL = "/media/"
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-SITE_ID = 2
+SITE_ID = 3
 SITE_DOMAIN = '127.0.0.1:3000'
 SITE_NAME = 'localhost'
 
