@@ -31,7 +31,7 @@ SECRET_KEY = env("DJANGO_SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', "http://localhost:8000", "127.0.0.1", ".retube.com"]
+ALLOWED_HOSTS = ['localhost', "http://localhost:8000", "127.0.0.1", ".retubeai.com"]
 
 # ALLOWED_HOSTS = ["*"]
 
@@ -273,7 +273,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost",
     "http://127.0.0.1:3000",
     "http://127.0.0.1",
-    "https://api.retube.com",
+    "https://api.retubeai.com",
     "https://www.retubeai.com"
 ]
 
