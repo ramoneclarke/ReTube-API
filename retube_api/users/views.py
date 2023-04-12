@@ -43,7 +43,7 @@ class CustomSocialLoginView(SocialLoginView):
 class GoogleLogin(CustomSocialLoginView):
     authentication_classes = []
     adapter_class = GoogleOAuth2Adapter
-    callback_url = 'http://localhost:3000'
+    callback_url = "https://www.retubeai.com"
     client_class = OAuth2Client
     
     @method_decorator(csrf_exempt)
