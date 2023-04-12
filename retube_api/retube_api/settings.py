@@ -245,25 +245,25 @@ SIMPLE_JWT = {
     # "AUTH_TOKEN_CLASSES": ("rest_framework_simplejwt.tokens.AccessToken",),
 }
 
-# Local
-CSRF_COOKIE_SECURE = False
-CSRF_COOKIE_HTTPONLY = False
-CSRF_COOKIE_DOMAIN = ".127.0.0.1"
-SESSION_COOKIE_SECURE = False
-SESSION_COOKIE_HTTPONLY = True
-SESSION_COOKIE_DOMAIN = ".127.0.0.1"
-CSRF_COOKIE_SAMESITE = "None"
-SESSION_COOKIE_SAMESITE = "None"
-
-# # Production
-# CSRF_COOKIE_SECURE = True
+# # Local
+# CSRF_COOKIE_SECURE = False
 # CSRF_COOKIE_HTTPONLY = False
-# CSRF_COOKIE_DOMAIN = ".retubeai.com"
-# SESSION_COOKIE_SECURE = True
+# CSRF_COOKIE_DOMAIN = ".127.0.0.1"
+# SESSION_COOKIE_SECURE = False
 # SESSION_COOKIE_HTTPONLY = True
-# SESSION_COOKIE_DOMAIN = ".retubeai.com"
+# SESSION_COOKIE_DOMAIN = ".127.0.0.1"
 # CSRF_COOKIE_SAMESITE = "None"
 # SESSION_COOKIE_SAMESITE = "None"
+
+# Production
+CSRF_COOKIE_SECURE = True
+CSRF_COOKIE_HTTPONLY = False
+CSRF_COOKIE_DOMAIN = ".retubeai.com"
+SESSION_COOKIE_SECURE = True
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_DOMAIN = ".retubeai.com"
+CSRF_COOKIE_SAMESITE = "None"
+SESSION_COOKIE_SAMESITE = "None"
 
 # CHANGE BEFORE PUSHING TO PRODUCTION
 # CORS_ALLOW_ALL_ORIGINS = True
@@ -274,7 +274,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000",
     "http://127.0.0.1",
     "https://api.retubeai.com",
-    "https://www.retubeai.com"
+    "https://www.retubeai.com",
+    "https://retubeai.com"
 ]
 
 
@@ -282,7 +283,8 @@ CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
     "http://localhost:3001",
     "http://127.0.0.1:3000",
-    "https://www.retubeai.com"
+    "https://www.retubeai.com",
+    "https://retubeai.com"
 ]
 
 CORS_ALLOW_CREDENTIALS = True
