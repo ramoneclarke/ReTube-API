@@ -284,7 +284,8 @@ CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3001",
     "http://127.0.0.1:3000",
     "https://www.retubeai.com",
-    "https://retubeai.com"
+    "https://retubeai.com",
+    "https://api.retubeai.com"
 ]
 
 CORS_ALLOW_CREDENTIALS = True
