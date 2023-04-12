@@ -31,7 +31,7 @@ SECRET_KEY = env("DJANGO_SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', "http://localhost:8000", "127.0.0.1", ".retubeai.com"]
+ALLOWED_HOSTS = ['localhost', "http://localhost:8000", "127.0.0.1", ".retubeai.com", "retube-api-production.up.railway.app"]
 
 # ALLOWED_HOSTS = ["*"]
 
