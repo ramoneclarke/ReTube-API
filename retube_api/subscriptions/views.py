@@ -107,7 +107,8 @@ class WebhookReceivedView(APIView):
 
         if webhook_secret:
             # Retrieve the event by verifying the signature using the raw body and secret if webhook signing is configured.
-            sig_header = request.headers.get('STRIPE_SIGNATURE')
+            sig_header = request.META['HTTP_STRIPE_SIGNATURE']
+            print(f'sig_header: {sig_header}')
             payload = request.body
 
             try:
