@@ -135,17 +135,18 @@ class CustomSocialLoginSerializer(SocialLoginSerializer):
             self.post_signup(login, attrs)
         attrs['user'] = login.account.user
         return attrs
-    
-    def post_signup(self, user, login, sociallogin, extra_data=None):
-        print(f'User: {user}')
-        print(f'login: {login}')
-        print(f'sociallogin: {sociallogin}')
-        # Call the parent method first to perform the default post-signup actions
-        super().post_signup(login, extra_data)
 
+    def post_signup(self, login, attrs):
+        """
+        Inject behavior when the user signs up with a social account.
+        :param login: The social login instance being registered.
+        :type login: allauth.socialaccount.models.SocialLogin
+        :param attrs: The attributes of the serializer.
+        :type attrs: dict
+        """
+        print(f'login: {login}')
         # Create a new subscription object for the user
         plan = SubscriptionPlan.objects.get(name="free")
         Subscription.objects.create(user=login.user, plan=plan, snippets_usage=0, 
                                     summaries_usage=0, search_playlists_active=0, 
-                                    )
-
+        
