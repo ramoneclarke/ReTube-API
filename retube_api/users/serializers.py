@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from dj_rest_auth.registration.serializers import SocialLoginSerializer
 from tools.serializers import SnippetSerializer, YoutubePlaylistSerializer
+from subscriptions.models import SubscriptionPlan, Subscription
 from .models import CustomUserModel
 
 class CustomUserModelSerializer(serializers.ModelSerializer):
@@ -134,3 +135,13 @@ class CustomSocialLoginSerializer(SocialLoginSerializer):
             self.post_signup(login, attrs)
         attrs['user'] = login.account.user
         return attrs
+    
+    def post_signup(self, login, extra_data=None):
+        # Call the parent method first to perform the default post-signup actions
+        super().post_signup(login, extra_data)
+
+        # Create a new subscription object for the user
+        plan = SubscriptionPlan.objects.get(name="free")
+        Subscription.objects.create(user=login.user, plan=plan, snippets_usage=0, 
+                                    summaries_usage=0, search_playlists_active=0, 
+                                    )
