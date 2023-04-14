@@ -133,9 +133,7 @@ class WebhookReceivedView(APIView):
 
             subscription_id = data_object.subscription
             stripe_subscription = stripe.Subscription.retrieve(subscription_id)
-            subscription_obj, created = Subscription.objects.get_or_create(
-                user__email=data_object.customer_details.email,
-            )
+            subscription_obj = Subscription.objects.get(user__email=data_object.customer_details.email)
             end_date_unix_timestamp = stripe_subscription.current_period_end
             end_date = datetime.datetime.fromtimestamp(end_date_unix_timestamp).date()
 
