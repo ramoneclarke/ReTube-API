@@ -146,7 +146,6 @@ class CustomSocialLoginSerializer(SocialLoginSerializer):
         :param attrs: The attributes of the serializer.
         :type attrs: dict
         """
-        print(f'login: {login}')
         # Create a new subscription object for the user
         try:
             plan = SubscriptionPlan.objects.get(name="free")
