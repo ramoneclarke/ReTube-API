@@ -149,4 +149,4 @@ class CustomSocialLoginSerializer(SocialLoginSerializer):
         plan = SubscriptionPlan.objects.get(name="free")
         Subscription.objects.create(user=login.user, plan=plan, snippets_usage=0, 
                                     summaries_usage=0, search_playlists_active=0, 
-        
+        )
