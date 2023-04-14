@@ -132,11 +132,9 @@ class CustomSocialLoginSerializer(SocialLoginSerializer):
                     )
             login.lookup()
             login.save(request, connect=True)
-            print("About to call post signup")
             self.post_signup(login, attrs)
-            print("After post signup")
         else:
-            print("login is existing. inside else block")
+            self.post_signup(login, attrs)
         attrs['user'] = login.account.user
         return attrs
 
