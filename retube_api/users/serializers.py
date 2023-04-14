@@ -135,6 +135,8 @@ class CustomSocialLoginSerializer(SocialLoginSerializer):
             print("About to call post signup")
             self.post_signup(login, attrs)
             print("After post signup")
+        else:
+            print("login is existing. inside else block")
         attrs['user'] = login.account.user
         return attrs
 
