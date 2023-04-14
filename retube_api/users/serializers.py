@@ -136,7 +136,10 @@ class CustomSocialLoginSerializer(SocialLoginSerializer):
         attrs['user'] = login.account.user
         return attrs
     
-    def post_signup(self, login, extra_data=None):
+    def post_signup(self, user, login, sociallogin, extra_data=None):
+        print(f'User: {user}')
+        print(f'login: {login}')
+        print(f'sociallogin: {sociallogin}')
         # Call the parent method first to perform the default post-signup actions
         super().post_signup(login, extra_data)
 
@@ -145,3 +148,4 @@ class CustomSocialLoginSerializer(SocialLoginSerializer):
         Subscription.objects.create(user=login.user, plan=plan, snippets_usage=0, 
                                     summaries_usage=0, search_playlists_active=0, 
                                     )
+
