@@ -220,7 +220,8 @@ class WebhookReceivedView(APIView):
             print(data)
         elif event_type == 'customer.subscription.deleted':
             # Sent when a customer’s subscription ends.
-           
+            print("data_object:")
+            print(data_object)
             subscription_obj = Subscription.objects.get(user__email=data_object.customer_details.email)
             free_plan = SubscriptionPlan.objects.get(name='free')
 
@@ -241,7 +242,7 @@ class WebhookReceivedView(APIView):
                 serializer.save()
             else:
                 print(serializer.errors)
-                
+
         elif event_type == 'customer.subscription.updated':
             # Listen to this to monitor subscription upgrades and downgrades.
             pass
