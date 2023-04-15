@@ -222,7 +222,7 @@ class WebhookReceivedView(APIView):
             # Sent when a customer’s subscription ends.
             print("data_object:")
             print(data_object)
-            subscription_obj = Subscription.objects.get(user__email=data_object.customer_details.email)
+            subscription_obj = Subscription.objects.get(stripe_customer_id=data_object.customer)
             free_plan = SubscriptionPlan.objects.get(name='free')
 
             serializer = SubscriptionSerializer(subscription_obj, data={
