@@ -108,7 +108,6 @@ class WebhookReceivedView(APIView):
         if webhook_secret:
             # Retrieve the event by verifying the signature using the raw body and secret if webhook signing is configured.
             sig_header = request.META['HTTP_STRIPE_SIGNATURE']
-            print(f'sig_header: {sig_header}')
             payload = request.body
 
             try:
@@ -133,10 +132,10 @@ class WebhookReceivedView(APIView):
 
             subscription_id = data_object.subscription
             stripe_subscription = stripe.Subscription.retrieve(subscription_id)
-            print("stripe subscription:")
-            print(stripe_subscription)
             subscription_obj = Subscription.objects.get(user__email=data_object.customer_details.email)
-            plan = SubscriptionPlan.objects.get(stripe_product_id=stripe_subscription.items.data[0].price.product)
+            plan = SubscriptionPlan.objects.get(stripe_product_id=stripe_subscription.plan.product)
+            start_date_unix_timestamp = stripe_subscription.current_period_start
+            start_date = datetime.datetime.fromtimestamp(start_date_unix_timestamp).date()
             end_date_unix_timestamp = stripe_subscription.current_period_end
             end_date = datetime.datetime.fromtimestamp(end_date_unix_timestamp).date()
 
@@ -144,6 +143,7 @@ class WebhookReceivedView(APIView):
                 'stripe_subscription_id': subscription_id,
                 'stripe_customer_id': stripe_subscription.customer,
                 'stripe_product_id': stripe_subscription.items.data[0].price.product,
+                'start_date': start_date,
                 'end_date': end_date,
                 'interval': stripe_subscription.items.data[0].price.recurring.interval,
                 'plan': plan.id,
