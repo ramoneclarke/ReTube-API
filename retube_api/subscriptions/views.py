@@ -232,7 +232,7 @@ class WebhookReceivedView(APIView):
             print(data_object)
             subscription_id = data_object.id
             stripe_subscription = stripe.Subscription.retrieve(subscription_id)
-            subscription_obj = Subscription.objects.get(stripe_subscription_id=data_object.id)
+            subscription_obj = Subscription.objects.get(stripe_customer_id=data_object.customer)
             
             previous_plan = subscription_obj.plan
             if previous_plan.name != 'free':
@@ -243,16 +243,11 @@ class WebhookReceivedView(APIView):
                 end_date = datetime.datetime.fromtimestamp(end_date_unix_timestamp).date()
 
                 serializer = SubscriptionSerializer(subscription_obj, data={
-                    'stripe_subscription_id': subscription_id,
-                    'stripe_customer_id': stripe_subscription.customer,
                     'stripe_product_id': stripe_subscription.plan.product,
                     'start_date': start_date,
                     'end_date': end_date,
                     'interval': stripe_subscription.plan.interval,
                     'plan': plan.id,
-                    'snippets_usage': 0,
-                    'summaries_usage': 0,
-                    'search_playlists_active': subscription_obj.search_playlists_active,
                 })
 
                 if serializer.is_valid():
