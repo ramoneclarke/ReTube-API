@@ -11,7 +11,7 @@ import environ
 import json
 import datetime
 from .models import Subscription, SubscriptionPlan
-from .serializers import CreateCheckoutSessionSerializer
+from .serializers import CreateCheckoutSessionSerializer, SubscriptionSerializer
 
 
 
@@ -134,19 +134,26 @@ class WebhookReceivedView(APIView):
             subscription_id = data_object.subscription
             stripe_subscription = stripe.Subscription.retrieve(subscription_id)
             subscription_obj = Subscription.objects.get(user__email=data_object.customer_details.email)
+            plan = SubscriptionPlan.objects.get(stripe_product_id=stripe_subscription.items.data[0].price.product)
             end_date_unix_timestamp = stripe_subscription.current_period_end
             end_date = datetime.datetime.fromtimestamp(end_date_unix_timestamp).date()
 
-            subscription_obj.stripe_subscription_id = subscription_id
-            subscription_obj.stripe_customer_id = stripe_subscription.customer
-            subscription_obj.stripe_product_id = stripe_subscription.items.data[0].price.product
-            subscription_obj.end_date = end_date
-            subscription_obj.interval = stripe_subscription.items.data[0].price.recurring.interval
-            plan = SubscriptionPlan.objects.get(stripe_product_id=stripe_subscription.items.data[0].price.product)
-            subscription_obj.plan = plan
-            subscription_obj.monthly_limit = plan.monthly_limit
-            subscription_obj.save()
-            
+            serializer = SubscriptionSerializer(subscription_obj, data={
+                'stripe_subscription_id': subscription_id,
+                'stripe_customer_id': stripe_subscription.customer,
+                'stripe_product_id': stripe_subscription.items.data[0].price.product,
+                'end_date': end_date,
+                'interval': stripe_subscription.items.data[0].price.recurring.interval,
+                'plan': plan.id,
+                'snippets_usage': 0,
+                'summaries_usage': 0,
+                'search_playlists_active': subscription_obj.search_playlists_active,
+            })
+
+            if serializer.is_valid():
+                serializer.save()
+            else:
+                print(serializer.errors)
 
 
         elif event_type == 'invoice.paid':

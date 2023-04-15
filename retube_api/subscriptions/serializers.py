@@ -1,19 +1,40 @@
 from rest_framework import serializers
+from .models import Subscription, SubscriptionPlan
 
 
 class CreateCheckoutSessionSerializer(serializers.Serializer):
     price_id = serializers.CharField()
 
-class SubscriptionPlanSerializer(serializers.Serializer):
-    name = serializers.CharField(max_length=200)
-    stripe_product_id = serializers.CharField(max_length=100)
+class SubscriptionPlanSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SubscriptionPlan
+        fields = [
+            'id',
+            'name',
+            'stripe_product_id',
+            'snippets_monthly_limit',
+            'snippets_max_length',
+            'summaries_monthly_limit',
+            'summaries_max_video_length',
+            'search_max_playlists',
+            'search_max_playlist_videos',
+            'search_max_video_length',
+        ]
 
-class SubscriptionSerializer(serializers.Serializer):
-    user_email = serializers.EmailField()
-    stripe_subscription_id = serializers.CharField(max_length=100)
-    stripe_customer_id = serializers.CharField(max_length=100)
-    stripe_product_id = serializers.CharField(max_length=100)
-    end_date = serializers.DateField()
-    interval = serializers.CharField(max_length=100)
-    plan = SubscriptionPlanSerializer()
-    monthly_limit = serializers.IntegerField()
+class SubscriptionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Subscription
+        fields = [
+            'id',
+            'user',
+            'plan',
+            'snippets_usage',
+            'summaries_usage',
+            'search_playlists_active',
+            'start_date',
+            'end_date',
+            'interval',
+            'stripe_subscription_id',
+            'stripe_customer_id',
+            'stripe_product_id',
+        ]
