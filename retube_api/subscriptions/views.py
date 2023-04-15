@@ -220,6 +220,30 @@ class WebhookReceivedView(APIView):
             print(data)
         elif event_type == 'customer.subscription.deleted':
             # Sent when a customer’s subscription ends.
+           
+            subscription_obj = Subscription.objects.get(user__email=data_object.customer_details.email)
+            free_plan = SubscriptionPlan.objects.get(name='free')
+
+            serializer = SubscriptionSerializer(subscription_obj, data={
+                'stripe_subscription_id': '',
+                'stripe_customer_id': stripe_subscription.customer,
+                'stripe_product_id': '',
+                'start_date': datetime.now(),
+                'end_date': None,
+                'interval': '',
+                'plan': free_plan.id,
+                'snippets_usage': 0,
+                'summaries_usage': 0,
+                'search_playlists_active': subscription_obj.search_playlists_active,
+            })
+
+            if serializer.is_valid():
+                serializer.save()
+            else:
+                print(serializer.errors)
+                
+        elif event_type == 'customer.subscription.updated':
+            # Listen to this to monitor subscription upgrades and downgrades.
             pass
         else:
             print('Unhandled event type {}'.format(event_type))
