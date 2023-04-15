@@ -182,7 +182,7 @@ class WebhookReceivedView(APIView):
             print(data_object)
             subscription_id = data_object.subscription
             stripe_subscription = stripe.Subscription.retrieve(subscription_id)
-            subscription_obj = Subscription.objects.get(user__email=data_object.customer_details.email)
+            subscription_obj = Subscription.objects.get(user__email=data_object.customer_email)
             
             previous_plan = subscription_obj.plan
             plan = SubscriptionPlan.objects.get(stripe_product_id=stripe_subscription.plan.product)
