@@ -213,12 +213,6 @@ class WebhookReceivedView(APIView):
                 # new subscription. subscription created in 'checkout.session.completed' event
                 pass
 
-        elif event_type == 'invoice.payment_failed':
-            # The payment failed or the customer does not have a valid payment method.
-            # The subscription becomes past_due. Notify your customer and send them to the
-            # customer portal to update their payment information.
-            print(data)
-
         elif event_type == 'customer.subscription.deleted':
             # Sent when a customer’s subscription ends.
             subscription_obj = Subscription.objects.get(stripe_customer_id=data_object.customer)
