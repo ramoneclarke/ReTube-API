@@ -178,8 +178,6 @@ class WebhookReceivedView(APIView):
             # Continue to provision the subscription as payments continue to be made.
             # Store the status in your database and check when a user accesses your service.
             # This approach helps you avoid hitting rate limits.
-            print("data object:")
-            print(data_object)
             subscription_id = data_object.subscription
             stripe_subscription = stripe.Subscription.retrieve(subscription_id)
             subscription_obj = Subscription.objects.get(user__email=data_object.customer_email)
@@ -220,6 +218,7 @@ class WebhookReceivedView(APIView):
             # The subscription becomes past_due. Notify your customer and send them to the
             # customer portal to update their payment information.
             print(data)
+
         elif event_type == 'customer.subscription.deleted':
             # Sent when a customer’s subscription ends.
             subscription_obj = Subscription.objects.get(stripe_customer_id=data_object.customer)
@@ -245,7 +244,8 @@ class WebhookReceivedView(APIView):
 
         elif event_type == 'customer.subscription.updated':
             # Listen to this to monitor subscription upgrades and downgrades.
-            pass
+            print("event data:")
+            print(data_object)
         else:
             print('Unhandled event type {}'.format(event_type))
 
