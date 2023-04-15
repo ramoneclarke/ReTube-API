@@ -241,29 +241,32 @@ class WebhookReceivedView(APIView):
             subscription_id = data_object.id
             stripe_subscription = stripe.Subscription.retrieve(subscription_id)
             subscription_obj = Subscription.objects.get(stripe_subscription_id=data_object.id)
-            plan = SubscriptionPlan.objects.get(stripe_product_id=stripe_subscription.plan.product)
-            start_date_unix_timestamp = stripe_subscription.current_period_start
-            start_date = datetime.datetime.fromtimestamp(start_date_unix_timestamp).date()
-            end_date_unix_timestamp = stripe_subscription.current_period_end
-            end_date = datetime.datetime.fromtimestamp(end_date_unix_timestamp).date()
+            
+            previous_plan = subscription_obj.plan
+            if previous_plan.name != 'free':
+                plan = SubscriptionPlan.objects.get(stripe_product_id=stripe_subscription.plan.product)
+                start_date_unix_timestamp = stripe_subscription.current_period_start
+                start_date = datetime.datetime.fromtimestamp(start_date_unix_timestamp).date()
+                end_date_unix_timestamp = stripe_subscription.current_period_end
+                end_date = datetime.datetime.fromtimestamp(end_date_unix_timestamp).date()
 
-            serializer = SubscriptionSerializer(subscription_obj, data={
-                'stripe_subscription_id': subscription_id,
-                'stripe_customer_id': stripe_subscription.customer,
-                'stripe_product_id': stripe_subscription.plan.product,
-                'start_date': start_date,
-                'end_date': end_date,
-                'interval': stripe_subscription.plan.interval,
-                'plan': plan.id,
-                'snippets_usage': 0,
-                'summaries_usage': 0,
-                'search_playlists_active': subscription_obj.search_playlists_active,
-            })
+                serializer = SubscriptionSerializer(subscription_obj, data={
+                    'stripe_subscription_id': subscription_id,
+                    'stripe_customer_id': stripe_subscription.customer,
+                    'stripe_product_id': stripe_subscription.plan.product,
+                    'start_date': start_date,
+                    'end_date': end_date,
+                    'interval': stripe_subscription.plan.interval,
+                    'plan': plan.id,
+                    'snippets_usage': 0,
+                    'summaries_usage': 0,
+                    'search_playlists_active': subscription_obj.search_playlists_active,
+                })
 
-            if serializer.is_valid():
-                serializer.save()
-            else:
-                print(serializer.errors)
+                if serializer.is_valid():
+                    serializer.save()
+                else:
+                    print(serializer.errors)
         else:
             print('Unhandled event type {}'.format(event_type))
 
