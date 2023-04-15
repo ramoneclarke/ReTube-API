@@ -96,6 +96,22 @@ class CreateCheckoutSessionView(APIView):
             return Response({'error': str(e)}, status=status.HTTP_403_FORBIDDEN)
 
 
+class CreateCustomerPortalSessionView(APIView):
+    def post(self, request, format=None):
+        try:
+            user = request.user
+            # checking if customer with email already exists
+            customer_data = stripe.Customer.list(email=user.email).data
+            customer_id = customer_data[0].id
+            # Authenticate your user.
+            session = stripe.billing_portal.Session.create(
+                customer=customer_id,
+                return_url='http://127.0.0.1:3000/account/',
+            )
+            return Response({'redirect': session.url}, status=status.HTTP_200_OK)
+        except stripe.error.StripeError as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
 
  
 class WebhookReceivedView(APIView):
@@ -162,12 +178,49 @@ class WebhookReceivedView(APIView):
             # Continue to provision the subscription as payments continue to be made.
             # Store the status in your database and check when a user accesses your service.
             # This approach helps you avoid hitting rate limits.
-            print(data)
+            subscription_id = data_object.subscription
+            stripe_subscription = stripe.Subscription.retrieve(subscription_id)
+            subscription_obj = Subscription.objects.get(user__email=data_object.customer_details.email)
+            
+            previous_plan = subscription_obj.plan
+            plan = SubscriptionPlan.objects.get(stripe_product_id=stripe_subscription.plan.product)
+
+            if plan == previous_plan:
+                # subscription renewal
+                start_date_unix_timestamp = stripe_subscription.current_period_start
+                start_date = datetime.datetime.fromtimestamp(start_date_unix_timestamp).date()
+                end_date_unix_timestamp = stripe_subscription.current_period_end
+                end_date = datetime.datetime.fromtimestamp(end_date_unix_timestamp).date()
+
+                serializer = SubscriptionSerializer(subscription_obj, data={
+                    'stripe_subscription_id': subscription_id,
+                    'stripe_customer_id': stripe_subscription.customer,
+                    'stripe_product_id': stripe_subscription.plan.product,
+                    'start_date': start_date,
+                    'end_date': end_date,
+                    'interval': stripe_subscription.plan.interval,
+                    'plan': plan.id,
+                    'snippets_usage': 0,
+                    'summaries_usage': 0,
+                    'search_playlists_active': subscription_obj.search_playlists_active,
+                })
+
+                if serializer.is_valid():
+                    serializer.save()
+                else:
+                    print(serializer.errors)
+            else:
+                # new subscription. subscription created in 'checkout.session.completed' event
+                pass
+
         elif event_type == 'invoice.payment_failed':
             # The payment failed or the customer does not have a valid payment method.
             # The subscription becomes past_due. Notify your customer and send them to the
             # customer portal to update their payment information.
             print(data)
+        elif event_type == 'customer.subscription.deleted':
+            # Sent when a customer’s subscription ends.
+            pass
         else:
             print('Unhandled event type {}'.format(event_type))
 
