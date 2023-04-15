@@ -142,10 +142,10 @@ class WebhookReceivedView(APIView):
             serializer = SubscriptionSerializer(subscription_obj, data={
                 'stripe_subscription_id': subscription_id,
                 'stripe_customer_id': stripe_subscription.customer,
-                'stripe_product_id': stripe_subscription.items.data[0].price.product,
+                'stripe_product_id': stripe_subscription.plan.product,
                 'start_date': start_date,
                 'end_date': end_date,
-                'interval': stripe_subscription.items.data[0].price.recurring.interval,
+                'interval': stripe_subscription.plan.interval,
                 'plan': plan.id,
                 'snippets_usage': 0,
                 'summaries_usage': 0,
