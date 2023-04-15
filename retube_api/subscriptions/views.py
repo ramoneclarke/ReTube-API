@@ -213,12 +213,6 @@ class WebhookReceivedView(APIView):
                 # new subscription. subscription created in 'checkout.session.completed' event
                 pass
 
-        elif event_type == 'invoice.payment_failed':
-            # The payment failed or the customer does not have a valid payment method.
-            # The subscription becomes past_due. Notify your customer and send them to the
-            # customer portal to update their payment information.
-            print(data)
-
         elif event_type == 'customer.subscription.deleted':
             # Sent when a customer’s subscription ends.
             subscription_obj = Subscription.objects.get(stripe_customer_id=data_object.customer)
@@ -244,8 +238,32 @@ class WebhookReceivedView(APIView):
 
         elif event_type == 'customer.subscription.updated':
             # Listen to this to monitor subscription upgrades and downgrades.
-            print("event data:")
-            print(data_object)
+            subscription_id = data_object.id
+            stripe_subscription = stripe.Subscription.retrieve(subscription_id)
+            subscription_obj = Subscription.objects.get(stripe_subscription_id=data_object.id)
+            plan = SubscriptionPlan.objects.get(stripe_product_id=stripe_subscription.plan.product)
+            start_date_unix_timestamp = stripe_subscription.current_period_start
+            start_date = datetime.datetime.fromtimestamp(start_date_unix_timestamp).date()
+            end_date_unix_timestamp = stripe_subscription.current_period_end
+            end_date = datetime.datetime.fromtimestamp(end_date_unix_timestamp).date()
+
+            serializer = SubscriptionSerializer(subscription_obj, data={
+                'stripe_subscription_id': subscription_id,
+                'stripe_customer_id': stripe_subscription.customer,
+                'stripe_product_id': stripe_subscription.plan.product,
+                'start_date': start_date,
+                'end_date': end_date,
+                'interval': stripe_subscription.plan.interval,
+                'plan': plan.id,
+                'snippets_usage': 0,
+                'summaries_usage': 0,
+                'search_playlists_active': subscription_obj.search_playlists_active,
+            })
+
+            if serializer.is_valid():
+                serializer.save()
+            else:
+                print(serializer.errors)
         else:
             print('Unhandled event type {}'.format(event_type))
 
