@@ -220,14 +220,12 @@ class WebhookReceivedView(APIView):
             print(data)
         elif event_type == 'customer.subscription.deleted':
             # Sent when a customer’s subscription ends.
-            print("data_object:")
-            print(data_object)
             subscription_obj = Subscription.objects.get(stripe_customer_id=data_object.customer)
             free_plan = SubscriptionPlan.objects.get(name='free')
 
             serializer = SubscriptionSerializer(subscription_obj, data={
                 'stripe_subscription_id': '',
-                'stripe_customer_id': stripe_subscription.customer,
+                'stripe_customer_id': data_object.customer,
                 'stripe_product_id': '',
                 'start_date': datetime.now(),
                 'end_date': None,
