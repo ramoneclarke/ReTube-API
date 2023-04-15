@@ -178,6 +178,8 @@ class WebhookReceivedView(APIView):
             # Continue to provision the subscription as payments continue to be made.
             # Store the status in your database and check when a user accesses your service.
             # This approach helps you avoid hitting rate limits.
+            print("data object:")
+            print(data_object)
             subscription_id = data_object.subscription
             stripe_subscription = stripe.Subscription.retrieve(subscription_id)
             subscription_obj = Subscription.objects.get(user__email=data_object.customer_details.email)
