@@ -149,9 +149,16 @@ class CustomSocialLoginSerializer(SocialLoginSerializer):
         # Create a new subscription object for the user
         try:
             plan = SubscriptionPlan.objects.get(name="free")
-            Subscription.objects.create(user=login.user, plan=plan, snippets_usage=0, 
-                                        summaries_usage=0, search_playlists_active=0, 
-            )
+            subscription, created = Subscription.objects.get_or_create(user=login.user, defaults={
+                'plan': plan,
+                'snippets_usage': 0,
+                'summaries_usage': 0,
+                'search_playlists_active': 0
+            })
+            if created:
+                print("Subscription object created for user:", login.user)
+            else:
+                print("Subscription object already exists for user:", login.user)
         except SubscriptionPlan.DoesNotExist:
             print("SubscriptionPlan with name 'free' does not exist")
         except Exception as e:
