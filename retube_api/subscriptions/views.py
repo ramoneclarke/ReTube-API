@@ -102,6 +102,7 @@ class CreateCustomerPortalSessionView(APIView):
             user = request.user
             # checking if customer with email already exists
             customer_data = stripe.Customer.list(email=user.email).data
+            print(f"customer_data: {customer_data}")
             customer_id = customer_data[0].id
             # Authenticate your user.
             session = stripe.billing_portal.Session.create(
