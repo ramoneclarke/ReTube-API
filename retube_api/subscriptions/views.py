@@ -100,10 +100,12 @@ class CreateCustomerPortalSessionView(APIView):
     def post(self, request, format=None):
         try:
             user = request.user
-            subscription = Subscription.objects.get(user=user)
-            customer_id = subscription.stripe_customer_id
-            print(f'subscription obj: {subscription}')
-
+            print(f'USER: {user}')
+            # checking if customer with email already exists
+            customer_data = stripe.Customer.list(email=user.email).data
+            print(f"customer_data: {customer_data}")
+            customer_id = customer_data[0].id
+            
             # Authenticate your user.
             session = stripe.billing_portal.Session.create(
                 customer=customer_id,
