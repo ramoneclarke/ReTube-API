@@ -22,8 +22,6 @@ class VideoSnippetView(APIView):
     """
     Fetch all of the user's snippets or create a new snippet.
     """
-
-    throttle_scope = 'snippets_limit'
     permission_classes = [IsAuthenticated, IsOwner]
 
     def get(self, request, format=None):
@@ -35,6 +33,12 @@ class VideoSnippetView(APIView):
 
     def post(self, request, format=None):
         user = request.user
+
+        limit = user.subscription.plan.snippets_monthly_limit
+        usage = user.subscription.snippets_usage  
+        if usage + 1 >= limit:
+            return Response({'detail': 'Snippet limit exceeded for current subscription level'}, status=status.HTTP_403_FORBIDDEN)
+
         video_id = request.data.get('video_id', None)
         start = request.data.get('start', None)
         end = request.data.get('end', None)
@@ -53,6 +57,10 @@ class VideoSnippetView(APIView):
         snippet = create_text_snippet(video_id, start, end, request.user)
         serializer = SnippetSerializer(snippet)
 
+        subscription = user.subscription
+        subscription.snippets_usage += 1
+        subscription.save()
+
         return Response(serializer.data)
 
 
@@ -60,7 +68,6 @@ class SummaryView(APIView):
     """
     Fetch a video summary or create a new summary.
     """
-    throttle_scope = 'summaries_limit'
     permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
@@ -72,6 +79,13 @@ class SummaryView(APIView):
         return Response(summary_serializer.data)
 
     def post(self, request, format=None):
+        user = request.user
+
+        limit = user.subscription.plan.summaries_monthly_limit
+        usage = user.subscription.summaries_usage  
+        if usage + 1 >= limit:
+            return Response({'detail': 'Summary limit exceeded for current subscription level'}, status=status.HTTP_403_FORBIDDEN)
+
         video_id = request.data.get('video_id', None)
         
         if not video_id:
@@ -91,6 +105,10 @@ class SummaryView(APIView):
             return summary
         
         serializer = SummarySerializer(summary)
+
+        subscription = user.subscription
+        subscription.summaries_usage += 1
+        subscription.save()
 
         return Response(serializer.data)
 

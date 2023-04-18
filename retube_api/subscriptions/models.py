@@ -16,7 +16,7 @@ class SubscriptionPlan(models.Model):
 
 
 class Subscription(models.Model):
-    user = models.ForeignKey(User, related_name="subscriptions", on_delete=models.CASCADE, default=None)
+    user = models.OneToOneField(User, related_name="subscription", on_delete=models.CASCADE, default=None)
     plan = models.ForeignKey(SubscriptionPlan, on_delete=models.CASCADE)
     snippets_usage = models.IntegerField(default=0)
     summaries_usage = models.IntegerField(default=0)
