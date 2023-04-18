@@ -215,13 +215,12 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_THROTTLE_CLASSES': [
         'rest_framework.throttling.AnonRateThrottle',
-        'subscriptions.throttling.MonthlyScopedRateThrottle',
+        'rest_framework.throttling.UserRateThrottle',
     ],
     'DEFAULT_THROTTLE_RATES': {
-        'anon': '50/min',
-        'snippets_limit': '0/month',
-        'summaries_limit': '0/month',
-    },
+        'user': '60/min',
+        'anon': '10/min'
+    }
 }
 
 ROOT_URLCONF = 'retube_api.urls'

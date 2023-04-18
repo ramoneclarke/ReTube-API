@@ -22,8 +22,6 @@ class VideoSnippetView(APIView):
     """
     Fetch all of the user's snippets or create a new snippet.
     """
-
-    throttle_scope = 'snippets_limit'
     permission_classes = [IsAuthenticated, IsOwner]
 
     def get(self, request, format=None):
@@ -60,7 +58,6 @@ class SummaryView(APIView):
     """
     Fetch a video summary or create a new summary.
     """
-    throttle_scope = 'summaries_limit'
     permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
