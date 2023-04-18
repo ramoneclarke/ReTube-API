@@ -2,6 +2,8 @@ from rest_framework.response import Response
 from rest_framework import generics, permissions
 from rest_framework.decorators import api_view
 from rest_framework.reverse import reverse
+from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
 from django.http import JsonResponse
 from django.middleware.csrf import get_token
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
@@ -10,6 +12,8 @@ from dj_rest_auth.registration.views import SocialLoginView
 from users.serializers import CustomUserModelSerializer
 from users.models import CustomUserModel
 from users.serializers import CustomSocialLoginSerializer
+from subscriptions.serializers import SubscriptionSerializer
+
 
 @api_view(["GET"])
 def api_root(request, format=None):
@@ -43,3 +47,10 @@ class GoogleLogin(CustomSocialLoginView):
     callback_url = 'http://localhost:3000'
     client_class = OAuth2Client
 
+
+class UserDataView(generics.RetrieveAPIView):
+    serializer_class = CustomUserModelSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get_object(self):
+        return self.request.user
