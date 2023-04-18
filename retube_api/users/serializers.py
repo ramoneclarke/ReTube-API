@@ -1,32 +1,4 @@
 from rest_framework import serializers
-from dj_rest_auth.registration.serializers import SocialLoginSerializer
-from tools.serializers import SnippetSerializer, YoutubePlaylistSerializer
-from subscriptions.models import SubscriptionPlan, Subscription
-from .models import CustomUserModel
-
-class CustomUserModelSerializer(serializers.ModelSerializer):
-    snippets = SnippetSerializer(many=True, read_only=True)
-    playlists = YoutubePlaylistSerializer(many=True, read_only=True)
-
-    class Meta:
-        model = CustomUserModel
-        fields = [
-            "userId",
-            "username",
-            "email",
-            "snippets",
-            "playlists"
-        ]
-    def create(self, validated_data):
-        user = CustomUserModel.objects.create_user(
-            validated_data["username"],
-            validated_data["email"],
-            validated_data["password"]
-        )
-
-        return user
-
-
 from allauth.socialaccount.providers.oauth2.client import OAuth2Error
 from django.contrib.auth import get_user_model
 from django.http import HttpResponseBadRequest
@@ -38,6 +10,36 @@ try:
     from allauth.socialaccount.helpers import complete_social_login
 except ImportError:
     raise ImportError('allauth needs to be added to INSTALLED_APPS.')
+from dj_rest_auth.registration.serializers import SocialLoginSerializer
+from tools.serializers import SnippetSerializer, YoutubePlaylistSerializer
+from subscriptions.serializers import SubscriptionSerializer
+from subscriptions.models import SubscriptionPlan, Subscription
+from .models import CustomUserModel
+
+class CustomUserModelSerializer(serializers.ModelSerializer):
+    snippets = SnippetSerializer(many=True, read_only=True)
+    playlists = YoutubePlaylistSerializer(many=True, read_only=True)
+    subscription = SubscriptionSerializer(read_only=True)
+
+    class Meta:
+        model = CustomUserModel
+        fields = [
+            "userId",
+            "username",
+            "email",
+            "snippets",
+            "playlists",
+            "subscription"
+        ]
+    def create(self, validated_data):
+        user = CustomUserModel.objects.create_user(
+            validated_data["username"],
+            validated_data["email"],
+            validated_data["password"]
+        )
+
+        return user
+
 
 class CustomSocialLoginSerializer(SocialLoginSerializer):
     def validate(self, attrs):
