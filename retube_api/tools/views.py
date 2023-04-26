@@ -33,6 +33,7 @@ class VideoSnippetView(APIView):
 
     def post(self, request, format=None):
         user = request.user
+        print(user)
 
         limit = user.subscription.plan.snippets_monthly_limit
         usage = user.subscription.snippets_usage  
@@ -43,6 +44,8 @@ class VideoSnippetView(APIView):
         start = request.data.get('start', None)
         end = request.data.get('end', None)
         
+        print(f"video_id: {video_id}, start: {start}, end: {end}")
+
         if not video_id:
             return Response({'error': 'video_id is required'}, status=400)
         if not start:
@@ -55,6 +58,8 @@ class VideoSnippetView(APIView):
             return Response({'detail': 'Snippet with the same video_id, start, and end already exists'}, status=status.HTTP_400_BAD_REQUEST)
         
         snippet = create_text_snippet(video_id, start, end, request.user)
+        print(f"snippet: {snippet}")
+        # print(snippet.content)
         serializer = SnippetSerializer(snippet)
 
         subscription = user.subscription
