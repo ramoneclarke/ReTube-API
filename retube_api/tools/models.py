@@ -10,12 +10,12 @@ class YoutubeVideo(models.Model):
         return self.title   
 
 class Summary(models.Model):
-    bullet_points = models.CharField(max_length=4000)
+    bullet_points = models.TextField()
     video = models.OneToOneField(YoutubeVideo, on_delete=models.CASCADE)    
 
 
 class Snippet(models.Model):
-    text = models.CharField(max_length=100)
+    text = models.TextField()
     video = models.ForeignKey(YoutubeVideo, on_delete=models.CASCADE)
     start = models.CharField(max_length=40, default="00:00:01.00")
     end = models.CharField(max_length=40, default="00:00:02.00")
