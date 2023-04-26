@@ -22,6 +22,8 @@ class SubscriptionPlanSerializer(serializers.ModelSerializer):
         ]
 
 class SubscriptionSerializer(serializers.ModelSerializer):
+    plan = SubscriptionPlanSerializer(read_only=True)
+    
     class Meta:
         model = Subscription
         fields = [
