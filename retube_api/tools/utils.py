@@ -100,10 +100,23 @@ def create_text_snippet(video_id, snippet_start, snippet_end, user):
 
     # Download video and convert to mp3 file
     try:
-        # Download the video using pytube
-        video = pytube.YouTube(url)
-        stream = video.streams.filter(only_audio=True).first()
-        stream.download()
+        try_again = True
+        counter = 0
+        while try_again:
+            try:
+                # Download the video using pytube
+                video = pytube.YouTube(url, use_oauth=True, allow_oauth_cache=True)
+                print(video)
+                stream = video.streams.filter(only_audio=True).first()
+                print(stream)
+                stream.download()
+                print("Downloaded video")
+                try_again = False
+            except Exception as e:
+                if counter > 40:
+                    return HttpResponseBadRequest("Error downloading audio file: " + str(e))
+                counter += 1
+                print(f"Download video attempt #{counter}")
 
         # Convert the video to MP3
         video_path = stream.default_filename
@@ -157,7 +170,7 @@ def create_summary_using_max_tokens_per_chunk(video_id):
     # Download video and convert to mp3 file
     try:
         # Download the video using pytube
-        video = pytube.YouTube(url)
+        video = pytube.YouTube(url, use_oauth=True, allow_oauth_cache=True)
         stream = video.streams.filter(only_audio=True).first()
         stream.download()
 
@@ -261,7 +274,7 @@ def create_summary(video_id):
     # Download video and convert to mp3 file
     try:
         # Download the video using pytube
-        video = pytube.YouTube(url)
+        video = pytube.YouTube(url, use_oauth=True, allow_oauth_cache=True)
         stream = video.streams.filter(only_audio=True).first()
         stream.download()
 
