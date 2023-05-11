@@ -23,7 +23,7 @@ class SnippetSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Snippet
-        fields = ("id", "text", "video", "date_created", "owner")
+        fields = ("id", "text", "video", "start", "end", "date_created", "owner")
 
 
 class YoutubePlaylistSerializer(serializers.ModelSerializer):
