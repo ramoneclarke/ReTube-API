@@ -134,7 +134,7 @@ def create_text_snippet(video_id, snippet_start, snippet_end, user):
                 print("Downloaded video")
                 try_again = False
             except Exception as e:
-                if counter > 40:
+                if counter > 4:
                     return HttpResponseBadRequest(
                         "Error downloading audio file: " + str(e)
                     )
