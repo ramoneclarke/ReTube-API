@@ -1,5 +1,4 @@
 from django.shortcuts import render
-import os
 from rest_framework.response import Response
 from django.http import HttpResponseBadRequest
 from rest_framework import status, generics, permissions
@@ -10,7 +9,6 @@ from rest_framework.permissions import IsAuthenticated
 from .models import Snippet, Summary, YoutubeVideo
 from tools.serializers import (
     SnippetSerializer,
-    YoutubePlaylistSerializer,
     SummarySerializer,
 )
 from tools.utils import create_text_snippet, create_summary
