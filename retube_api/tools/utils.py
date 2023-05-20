@@ -126,7 +126,7 @@ def create_text_snippet(video_id, snippet_start, snippet_end, user):
         while try_again:
             try:
                 # Download the video using pytube
-                video = pytube.YouTube(url, use_oauth=True, allow_oauth_cache=True)
+                video = pytube.YouTube(url)
                 print(video)
                 stream = video.streams.filter(only_audio=True).first()
                 print(stream)
@@ -194,7 +194,7 @@ def create_summary_using_max_tokens_per_chunk(video_id, user):
     # Download video and convert to mp3 file
     try:
         # Download the video using pytube
-        video = pytube.YouTube(url, use_oauth=True, allow_oauth_cache=True)
+        video = pytube.YouTube(url)
         stream = video.streams.filter(only_audio=True).first()
         stream.download()
 
@@ -295,7 +295,7 @@ def create_summary(video_id, user):
     # Download video and convert to mp3 file
     try:
         # Download the video using pytube
-        video = pytube.YouTube(url, use_oauth=True, allow_oauth_cache=True)
+        video = pytube.YouTube(url)
         stream = video.streams.filter(only_audio=True).first()
         stream.download()
 
