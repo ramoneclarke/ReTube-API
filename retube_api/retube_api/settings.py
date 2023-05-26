@@ -31,7 +31,13 @@ SECRET_KEY = env("DJANGO_SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', "http://localhost:8000", "127.0.0.1", ".retubeai.com", "retube-api-production.up.railway.app"]
+ALLOWED_HOSTS = [
+    "localhost",
+    "http://localhost:8000",
+    "127.0.0.1",
+    ".retubeai.com",
+    "retube-api-production.up.railway.app",
+]
 
 # ALLOWED_HOSTS = ["*"]
 
@@ -39,74 +45,68 @@ ALLOWED_HOSTS = ['localhost', "http://localhost:8000", "127.0.0.1", ".retubeai.c
 
 AUTHENTICATION_BACKENDS = [
     # Needed to login by username in Django admin, regardless of `allauth`
-    'django.contrib.auth.backends.ModelBackend',
-
+    "django.contrib.auth.backends.ModelBackend",
     # `allauth` specific authentication methods, such as login by e-mail
-    'allauth.account.auth_backends.AuthenticationBackend',
+    "allauth.account.auth_backends.AuthenticationBackend",
 ]
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-
-    'rest_framework',
-    'rest_framework.authtoken',
-    'corsheaders',
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "rest_framework",
+    "rest_framework.authtoken",
+    "corsheaders",
     "django.contrib.sites",
-
-    'dj_rest_auth',
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-    'allauth.socialaccount.providers.google',
-    'dj_rest_auth.registration',
-    
-    'rest_framework_simplejwt.token_blacklist',
-
-    'tools.apps.ToolsConfig',
-    'users.apps.UsersConfig',
-    'subscriptions.apps.SubscriptionsConfig'
-    
+    "dj_rest_auth",
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "allauth.socialaccount.providers.google",
+    "dj_rest_auth.registration",
+    "rest_framework_simplejwt.token_blacklist",
+    "tools.apps.ToolsConfig",
+    "users.apps.UsersConfig",
+    "subscriptions.apps.SubscriptionsConfig",
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.middleware.common.CommonMiddleware',
+    "django.middleware.security.SecurityMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "django.middleware.common.CommonMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
 ]
 
-ROOT_URLCONF = 'retube_api.urls'
+ROOT_URLCONF = "retube_api.urls"
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-                'social_django.context_processors.backends',
-                'social_django.context_processors.login_redirect',
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
+                "social_django.context_processors.backends",
+                "social_django.context_processors.login_redirect",
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'retube_api.wsgi.application'
+WSGI_APPLICATION = "retube_api.wsgi.application"
 
 
 # Database
@@ -121,10 +121,10 @@ DATABASES = {
         "HOST": env("PGHOST"),
         "PORT": env("PGPORT"),
     },
-    'sqlite': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    "sqlite": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
+    },
 }
 
 CACHES = {
@@ -139,16 +139,16 @@ CACHES = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
 
@@ -156,9 +156,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = "UTC"
 
 USE_I18N = True
 
@@ -168,17 +168,17 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = "static/"
 # STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
-STATIC_ROOT =os.path.join(BASE_DIR, 'staticfiles')
-MEDIA_ROOT = os.path.join(BASE_DIR, 'static', 'media')
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+MEDIA_ROOT = os.path.join(BASE_DIR, "static", "media")
 MEDIA_URL = "/media/"
 
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 SITE_ID = 3
 # SITE_DOMAIN = '127.0.0.1:3000'
@@ -186,17 +186,16 @@ SITE_ID = 3
 
 # Provider specific settings
 SOCIALACCOUNT_PROVIDERS = {
-    'google': {
-        'SCOPE': [
-            'profile',
-            'email',
+    "google": {
+        "SCOPE": [
+            "profile",
+            "email",
         ],
-        'AUTH_PARAMS': {
-            'access_type': 'offline',
+        "AUTH_PARAMS": {
+            "access_type": "offline",
         },
         # 'OAUTH_PKCE_ENABLED': True,
     }
-    
 }
 
 SOCIALACCOUNT_EMAIL_VERIFICATION = "none"
@@ -209,40 +208,34 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",
     ],
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.SessionAuthentication",
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
     ],
-    'DEFAULT_THROTTLE_CLASSES': [
-        'rest_framework.throttling.AnonRateThrottle',
-        'rest_framework.throttling.UserRateThrottle',
+    "DEFAULT_THROTTLE_CLASSES": [
+        "rest_framework.throttling.AnonRateThrottle",
+        "rest_framework.throttling.UserRateThrottle",
     ],
-    'DEFAULT_THROTTLE_RATES': {
-        'user': '60/min',
-        'anon': '10/min'
-    }
+    "DEFAULT_THROTTLE_RATES": {"user": "60/min", "anon": "10/min"},
 }
 
-ROOT_URLCONF = 'retube_api.urls'
+ROOT_URLCONF = "retube_api.urls"
 
 REST_AUTH = {
-    'LOGIN_SERIALIZER': 'dj_rest_auth.serializers.LoginSerializer',
-    'TOKEN_SERIALIZER': 'dj_rest_auth.serializers.TokenSerializer',
-
-    'REGISTER_SERIALIZER': 'dj_rest_auth.registration.serializers.RegisterSerializer',
-    'REGISTER_PERMISSION_CLASSES': ('rest_framework.permissions.AllowAny',),
-
-    'USER_DETAILS_SERIALIZER': 'users.serializers.CustomUserModelSerializer',
-
-    'TOKEN_MODEL': 'rest_framework.authtoken.models.Token',
-    'TOKEN_CREATOR': 'dj_rest_auth.utils.default_create_token',
-
-    'SESSION_LOGIN': True,
-    'USE_JWT': True,
-    'JWT_AUTH_HTTPONLY': False
+    "LOGIN_SERIALIZER": "dj_rest_auth.serializers.LoginSerializer",
+    "TOKEN_SERIALIZER": "dj_rest_auth.serializers.TokenSerializer",
+    "REGISTER_SERIALIZER": "dj_rest_auth.registration.serializers.RegisterSerializer",
+    "REGISTER_PERMISSION_CLASSES": ("rest_framework.permissions.AllowAny",),
+    "USER_DETAILS_SERIALIZER": "users.serializers.CustomUserModelSerializer",
+    "TOKEN_MODEL": "rest_framework.authtoken.models.Token",
+    "TOKEN_CREATOR": "dj_rest_auth.utils.default_create_token",
+    "SESSION_LOGIN": True,
+    "USE_JWT": True,
+    "JWT_AUTH_HTTPONLY": False,
 }
 
 from datetime import timedelta
+
 ...
 
 SIMPLE_JWT = {
@@ -255,7 +248,6 @@ SIMPLE_JWT = {
     "USER_ID_FIELD": "userId",
     "USER_ID_CLAIM": "user_id",
     "SIGNING_KEY": env("JWT_SECRET_KEY"),
-
     # "AUTH_TOKEN_CLASSES": ("rest_framework_simplejwt.tokens.AccessToken",),
 }
 
@@ -289,7 +281,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1",
     "https://api.retubeai.com",
     "https://www.retubeai.com",
-    "https://retubeai.com"
+    "https://app.retubeai.com",
+    "https://retubeai.com",
 ]
 
 
@@ -298,8 +291,9 @@ CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3001",
     "http://127.0.0.1:3000",
     "https://www.retubeai.com",
+    "https://app.retubeai.com",
     "https://retubeai.com",
-    "https://api.retubeai.com"
+    "https://api.retubeai.com",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
