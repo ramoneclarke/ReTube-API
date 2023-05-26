@@ -12,7 +12,13 @@ from dj_rest_auth.registration.views import SocialLoginView
 from users.serializers import CustomUserModelSerializer
 from users.models import CustomUserModel
 from users.serializers import CustomSocialLoginSerializer
-from subscriptions.serializers import SubscriptionSerializer
+import environ
+
+
+env = environ.Env()
+# reading .env file
+environ.Env.read_env()
+callback_url = env("GOOGLE_LOGIN_CALLBACK_URL")
 
 
 @api_view(["GET"])
@@ -25,11 +31,15 @@ def api_root(request, format=None):
         }
     )
 
+
 def get_csrf(request):
     token = get_token(request)
     print("CSRF TOKEN: ", token)
-    response = JsonResponse({"Result": "Success - Set CSRF cookie", "X-CSRFToken": token})
+    response = JsonResponse(
+        {"Result": "Success - Set CSRF cookie", "X-CSRFToken": token}
+    )
     return response
+
 
 class UserList(generics.ListAPIView):
     queryset = CustomUserModel.objects.all()
@@ -41,10 +51,11 @@ class UserList(generics.ListAPIView):
 class CustomSocialLoginView(SocialLoginView):
     serializer_class = CustomSocialLoginSerializer
 
+
 class GoogleLogin(CustomSocialLoginView):
     authentication_classes = []
     adapter_class = GoogleOAuth2Adapter
-    callback_url = 'http://localhost:3000'
+    callback_url = callback_url
     client_class = OAuth2Client
 
 
