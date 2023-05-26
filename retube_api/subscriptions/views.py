@@ -80,16 +80,16 @@ class CreateCheckoutSessionView(APIView):
             if customer_data:
                 customer_id = customer_data[0].id
                 session = stripe.checkout.Session.create(
-                    success_url="http://www.retubeai.com/account?session_id={CHECKOUT_SESSION_ID}",
-                    cancel_url="http://www.retubeai.com/account/",
+                    success_url="http://app.retubeai.com/account?session_id={CHECKOUT_SESSION_ID}",
+                    cancel_url="http://app.retubeai.com/account/",
                     mode="subscription",
                     line_items=[{"price": price_id, "quantity": 1}],
                     customer=customer_id,
                 )
             else:
                 session = stripe.checkout.Session.create(
-                    success_url="http://www.retubeai.com/account?session_id={CHECKOUT_SESSION_ID}",
-                    cancel_url="http://www.retubeai.com/account/",
+                    success_url="http://app.retubeai.com/account?session_id={CHECKOUT_SESSION_ID}",
+                    cancel_url="http://app.retubeai.com/account/",
                     mode="subscription",
                     line_items=[{"price": price_id, "quantity": 1}],
                     customer_email=user.email,
@@ -112,7 +112,7 @@ class CreateCustomerPortalSessionView(APIView):
             # Authenticate your user.
             session = stripe.billing_portal.Session.create(
                 customer=customer_id,
-                return_url="http://www.retubeai.com/account/",
+                return_url="http://app.retubeai.com/account/",
             )
             return Response({"redirect": session.url}, status=status.HTTP_200_OK)
         except stripe.error.StripeError as e:
